@@ -16,18 +16,41 @@
 //
 // Execute `rustlings hint quiz3` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
+
+use std::fmt;
+
+enum Grade {
+    Numerical(f32),
+    Alphabetical(String),
+}
 
 pub struct ReportCard {
-    pub grade: f32,
+    pub grade: Grade,
     pub student_name: String,
     pub student_age: u8,
 }
 
 impl ReportCard {
     pub fn print(&self) -> String {
-        format!("{} ({}) - achieved a grade of {}",
-            &self.student_name, &self.student_age, &self.grade)
+        format!("{}",
+            &self)
+    }
+}
+
+// To use the `{}` marker, the trait `fmt::Display` must be implemented
+// manually for the type.
+impl fmt::Display for ReportCard {
+    // This trait requires `fmt` with this exact signature.
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Write strictly the first element into the supplied output
+        // stream: `f`. Returns `fmt::Result` which indicates whether the
+        // operation succeeded or failed. Note that `write!` uses syntax which
+        // is very similar to `println!`.
+        match &self.grade {
+            Grade::Numerical(n) => write!(f,"{} ({}) - achieved a grade of {}", &self.student_name, &self.student_age, n),
+            Grade::Alphabetical(s) => write!(f,"{} ({}) - achieved a grade of {}", &self.student_name, &self.student_age, s),
+        }
+        
     }
 }
 
@@ -38,7 +61,7 @@ mod tests {
     #[test]
     fn generate_numeric_report_card() {
         let report_card = ReportCard {
-            grade: 2.1,
+            grade: Grade::Numerical(2.1),
             student_name: "Tom Wriggle".to_string(),
             student_age: 12,
         };
@@ -52,7 +75,7 @@ mod tests {
     fn generate_alphabetic_report_card() {
         // TODO: Make sure to change the grade here after you finish the exercise.
         let report_card = ReportCard {
-            grade: 2.1,
+            grade: Grade::Alphabetical("A+".to_string()),
             student_name: "Gary Plotter".to_string(),
             student_age: 11,
         };
